@@ -3,11 +3,27 @@ import React, { FC } from "react";
 import FullScreenModal from "./FullScreenModal";
 import Images from "../ui/Image";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 interface LogoCardProps extends Logo {}
 
 const LogoCard: FC<LogoCardProps> = ({ domain, logo, name }) => {
   const [fullScreen, setFullScreen] = React.useState(false);
+
+  const handleUpload = async () => {
+    try {
+      const response = await axios.post("/api/image", {
+        domain,
+        name,
+        Token,
+      });
+
+      console.log("response", response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <div className="bg-darkblue flex flex-col p-3 rounded-lg  ">
@@ -26,7 +42,10 @@ const LogoCard: FC<LogoCardProps> = ({ domain, logo, name }) => {
         </div>
 
         <div className="h-full flex flex-col justify-end mt-2">
-          <Button className="h-fit self-end text-neutral-100  bg-dodgerblue shadow-none hover:bg-lightblue duration-200 ease-linear w-full ">
+          <Button
+            onClick={handleUpload}
+            className="h-fit self-end text-neutral-100  bg-dodgerblue shadow-none hover:bg-lightblue duration-200 ease-linear w-full "
+          >
             Save
           </Button>
         </div>

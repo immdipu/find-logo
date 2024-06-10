@@ -19,7 +19,6 @@ const LogoFilter = () => {
       const response = await axios.get(
         `https://search.logo.dev/?query=${searchTerm}`
       );
-      console.log(response.data);
       setLogos(response.data);
       setIsLoading(false);
     } catch (error) {

@@ -4,13 +4,16 @@ import FullScreenModal from "./FullScreenModal";
 import Images from "../ui/Image";
 import { Button } from "../ui/button";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface LogoCardProps extends Logo {}
 
-const LogoCard: FC<LogoCardProps> = ({ domain, logo, name }) => {
+const LogoCard: FC<LogoCardProps> = ({ domain, name }) => {
   const [fullScreen, setFullScreen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleUpload = async () => {
+    setLoading(true);
     try {
       const response = await axios.post("/api/image", {
         domain,
@@ -18,9 +21,19 @@ const LogoCard: FC<LogoCardProps> = ({ domain, logo, name }) => {
         Token,
       });
 
-      console.log("response", response);
+      if (response?.data?.status === "success") {
+        toast.success("Logo Uploaded Successfully");
+      }
+
+      if (response?.data?.status === "error") {
+        toast.error(response?.data?.message || "Failed to Upload Logo");
+      }
+
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      toast.error("Failed to Upload Logo");
+      setLoading(false);
     }
   };
 
@@ -43,10 +56,11 @@ const LogoCard: FC<LogoCardProps> = ({ domain, logo, name }) => {
 
         <div className="h-full flex flex-col justify-end mt-2">
           <Button
+            disabled={loading}
             onClick={handleUpload}
             className="h-fit self-end text-neutral-100  bg-dodgerblue shadow-none hover:bg-lightblue duration-200 ease-linear w-full "
           >
-            Save
+            {loading ? "Uploading..." : "Upload"}
           </Button>
         </div>
       </div>

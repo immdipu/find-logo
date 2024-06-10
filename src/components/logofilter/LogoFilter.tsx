@@ -60,7 +60,11 @@ const LogoFilter = () => {
           </div>
         )}
 
-        {!isLoading && logos && logos?.length === 0 && <p>No logos found</p>}
+        {!isLoading && logos && logos?.length === 0 && (
+          <p className="mt-20 text-center w-full text-base text-neutral-400">
+            No logos found, try another search term
+          </p>
+        )}
 
         {!isLoading &&
           logos &&

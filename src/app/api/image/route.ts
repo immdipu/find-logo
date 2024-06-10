@@ -2,6 +2,7 @@ import uploadImage from "@/cloudinary/Upload";
 import { dbConnect } from "@/dbConfig/dbConfig";
 import Logo from "@/model/logoSchema";
 import { NextRequest, NextResponse } from "next/server";
+export const maxDuration = 50;
 
 dbConnect();
 export async function POST(request: NextRequest) {

@@ -76,9 +76,7 @@ const LogoFilter = () => {
           </p>
         )}
 
-        <a href="https://logo.dev" alt="Logo API">
-          Logos provided by Logo.dev
-        </a>
+        <a href="https://logo.dev">Logos provided by Logo.dev</a>
       </section>
     </div>
   );

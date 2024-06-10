@@ -75,8 +75,6 @@ const LogoFilter = () => {
             Search for logos...
           </p>
         )}
-
-        <a href="https://logo.dev">Logos provided by Logo.dev</a>
       </section>
     </div>
   );

@@ -2,6 +2,7 @@ import uploadImage from "@/cloudinary/Upload";
 import { dbConnect } from "@/dbConfig/dbConfig";
 import Logo from "@/model/logoSchema";
 import { NextRequest, NextResponse } from "next/server";
+import axios from "axios";
 export const maxDuration = 50;
 
 dbConnect();
@@ -12,15 +13,24 @@ export async function POST(request: NextRequest) {
 
     const logoData = await Logo.findOne({ domain });
 
+    const response = await axios.get(
+      `https://img.logo.dev/${domain}?token=${Token}`,
+      {
+        responseType: "arraybuffer",
+      }
+    );
+
     if (logoData) {
       return NextResponse.json({
         status: "error",
         message: "Logo already exists",
       });
     }
-    const logoLink = `https://img.logo.dev/${domain}?token=${Token}&size=512`;
 
-    const imageUpload = await uploadImage(logoLink);
+    const imageUpload = (await uploadImage(
+      response.data,
+      `${name}.png`
+    )) as any;
 
     if (!imageUpload) {
       return NextResponse.json({

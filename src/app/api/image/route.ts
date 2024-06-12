@@ -9,16 +9,9 @@ dbConnect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const { domain, name, Token } = reqBody;
+    const { logoUrl, name, domain } = reqBody;
 
     const logoData = await Logo.findOne({ domain });
-
-    const response = await axios.get(
-      `https://img.logo.dev/${domain}?token=${Token}`,
-      {
-        responseType: "arraybuffer",
-      }
-    );
 
     if (logoData) {
       return NextResponse.json({
@@ -27,10 +20,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const imageUpload = (await uploadImage(
-      response.data,
-      `${name}.png`
-    )) as any;
+    const imageUpload = (await uploadImage(logoUrl)) as any;
 
     if (!imageUpload) {
       return NextResponse.json({

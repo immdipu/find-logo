@@ -8,17 +8,22 @@ import toast from "react-hot-toast";
 
 interface LogoCardProps extends Logo {}
 
-const LogoCard: FC<LogoCardProps> = ({ domain, icon, name }) => {
+const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
   const [fullScreen, setFullScreen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const handleUpload = async () => {
     setLoading(true);
     try {
+      const brand = await getIcon(brandId);
+      if (!brand) {
+        toast.error("Failed to Upload Logo" || "Failed to Upload Logo");
+      }
+
       const response = await axios.post("/api/image", {
-        domain,
-        name,
-        Token,
+        logoUrl: brand?.logos[0].formats[0].src,
+        name: brand?.name,
+        domain: brand?.domain,
       });
 
       if (response?.data?.status === "success") {
@@ -35,6 +40,21 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name }) => {
       toast.error("Failed to Upload Logo");
       setLoading(false);
     }
+  };
+
+  const getIcon = async (domainId: string): Promise<Brand | null> => {
+    const response = await axios.get(
+      `https://api.brandfetch.io/v2/brands/${domainId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      }
+    );
+
+    console.log("response", response?.data);
+
+    return response?.data || null;
   };
 
   return (

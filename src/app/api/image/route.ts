@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       {
         status: "error",
         message: "An error occurred while fetching logos",
+        Error: error,
       },
       {
         status: 500,

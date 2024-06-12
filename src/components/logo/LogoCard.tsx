@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 interface LogoCardProps extends Logo {}
 
-const LogoCard: FC<LogoCardProps> = ({ domain, name }) => {
+const LogoCard: FC<LogoCardProps> = ({ domain, icon, name }) => {
   const [fullScreen, setFullScreen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -41,7 +41,7 @@ const LogoCard: FC<LogoCardProps> = ({ domain, name }) => {
     <>
       <div className="bg-darkblue flex flex-col p-3 rounded-lg  ">
         <Images
-          src={`https://img.logo.dev/${domain}?token=${Token}`}
+          src={icon}
           height={150}
           alt={name}
           width={150}

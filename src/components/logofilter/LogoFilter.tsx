@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 import axios from "axios";
 import LogoCard from "../logo/LogoCard";
 import Loader from "../ui/Loader";
+import { BaseUrl } from "@/lib/const";
 
 const LogoFilter = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -16,9 +17,8 @@ const LogoFilter = () => {
   const searchLogos = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `https://search.logo.dev/?query=${searchTerm}`
-      );
+      const response = await axios.get(`${BaseUrl}/v2/search/${searchTerm}`);
+      console.log("response", response.data);
       setLogos(response.data);
       setIsLoading(false);
     } catch (error) {

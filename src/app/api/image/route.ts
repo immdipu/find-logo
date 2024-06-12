@@ -3,6 +3,7 @@ import { dbConnect } from "@/dbConfig/dbConfig";
 import Logo from "@/model/logoSchema";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import { json } from "stream/consumers";
 export const maxDuration = 50;
 
 dbConnect();
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       {
         status: "error",
         message: "An error occurred while fetching logos",
-        Error: error,
+        Error: JSON.stringify(error),
       },
       {
         status: 500,

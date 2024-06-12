@@ -1,4 +1,4 @@
-import { Token } from "@/lib/const";
+import { API_KEY, Token } from "@/lib/const";
 import React, { FC } from "react";
 import FullScreenModal from "./FullScreenModal";
 import Images from "../ui/Image";
@@ -52,10 +52,22 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
       }
     );
 
-    console.log("response", response?.data);
-
     return response?.data || null;
   };
+
+  // const extractImage = async (url: string) => {
+  //   const res = await fetch("https://api.extract.pics/v0/extractions", {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: `Bearer ${API_KEY}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ url: url }),
+  //   });
+
+  //   const json = await res.json();
+  //   return image;
+  // };
 
   return (
     <>

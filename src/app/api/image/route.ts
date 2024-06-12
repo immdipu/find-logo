@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
 
     const imageUpload = (await uploadImage(logoUrl)) as any;
 
+    console.log("imageUpload", imageUpload);
+
     if (!imageUpload) {
       return NextResponse.json({
         status: "error",

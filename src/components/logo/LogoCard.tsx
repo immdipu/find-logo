@@ -5,28 +5,31 @@ import Images from "../ui/Image";
 import { Button } from "../ui/button";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import { ArrowBigDown, ArrowDown } from "lucide-react";
+import clsx from "clsx";
 interface LogoCardProps extends Logo {}
-
 const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
   const [fullScreen, setFullScreen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [staus, setStaus] = React.useState<
+    "BEGIN" | "FETCHING" | "UPLOADING" | null
+  >(null);
+  const [download, setDownload] = React.useState(false);
 
   const handleUpload = async () => {
-    setLoading(true);
+    setStaus("BEGIN");
     try {
+      setStaus("FETCHING");
       const brand = await getIcon(brandId);
-
       if (!brand) {
         toast.error("Failed to Upload Logo" || "Failed to Upload Logo");
       }
       const file = await getImageFile(brand?.logos[0].formats[0].src!);
-
       const newform = new FormData();
       newform.append("file", file);
       newform.append("domain", domain);
       newform.append("name", brand?.name || "no name");
 
+      setStaus("UPLOADING");
       const response = await axios.post("/api/image", newform, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -40,12 +43,11 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
       if (response?.data?.status === "error") {
         toast.error(response?.data?.message || "Failed to Upload Logo");
       }
-
-      setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error("Failed to Upload Logo");
-      setLoading(false);
+    } finally {
+      setStaus(null);
     }
   };
 
@@ -68,6 +70,24 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
     return new File([data], "logo.png", { type: "image/png" });
   };
 
+  const downloadImage = async () => {
+    setDownload(true);
+    try {
+      const brand = await getIcon(brandId);
+      const file = await getImageFile(brand?.logos[0].formats[0].src!);
+      const url = URL.createObjectURL(file);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "logo.png";
+      a.click();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to Download Logo");
+    } finally {
+      setDownload(false);
+    }
+  };
+
   return (
     <>
       <div className="bg-darkblue flex flex-col p-3 rounded-lg  ">
@@ -75,7 +95,7 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
           src={icon}
           height={150}
           alt={name}
-          width={150}
+          width={200}
           onclick={() => {
             setFullScreen(true);
           }}
@@ -86,13 +106,28 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
         </div>
 
         <div className="h-full flex flex-col justify-end mt-2">
-          <Button
-            disabled={loading}
-            onClick={handleUpload}
-            className="h-fit self-end text-neutral-100  bg-dodgerblue shadow-none hover:bg-lightblue duration-200 ease-linear w-full "
-          >
-            {loading ? "Uploading..." : "Upload"}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              disabled={!!staus}
+              onClick={handleUpload}
+              className="h-fit self-end text-neutral-100 active:scale-90 duration-150 transition-all ease-linear  bg-dodgerblue shadow-none hover:bg-lightblue duration-200 ease-linear w-full "
+            >
+              {staus === "FETCHING"
+                ? "Fetching..."
+                : staus === "UPLOADING"
+                ? "Uploading..."
+                : "Upload Logo"}
+            </Button>
+            <Button
+              title="Download"
+              onClick={downloadImage}
+              className=" bg-dodgerblue h-9 hover:bg-lightblue active:scale-90 duration-150 transition-all ease-linear"
+            >
+              <ArrowDown
+                className={clsx("text-white", download ? "animate-ping" : "")}
+              />
+            </Button>
+          </div>
         </div>
       </div>
 

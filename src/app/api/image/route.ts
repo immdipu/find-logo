@@ -27,8 +27,6 @@ export async function POST(request: NextRequest) {
 
     const image: any = await formdata.get("file");
 
-    console.log("image", image);
-
     if (!image) {
       return NextResponse.json({
         status: "error",
@@ -37,7 +35,6 @@ export async function POST(request: NextRequest) {
     }
 
     const fileBuffer = await image.arrayBuffer();
-    console.log("fileBuffer", fileBuffer);
     var mime = image.type;
     var encoding = "base64";
     var base64Data = Buffer.from(fileBuffer).toString("base64");
@@ -51,8 +48,6 @@ export async function POST(request: NextRequest) {
         message: "An error occurred while uploading image",
       });
     }
-
-    console.log("imageUpload", imageUpload);
 
     const newLogo = new Logo({
       name: formdata.get("name"),

@@ -15,10 +15,10 @@ const LogoFilter = () => {
   const [logos, setLogos] = React.useState<Logo[] | null>(null);
 
   const searchLogos = async () => {
+    if (!searchTerm) return;
     setIsLoading(true);
     try {
       const response = await axios.get(`${BaseUrl}/v2/search/${searchTerm}`);
-      console.log("response", response.data);
       setLogos(response.data);
       setIsLoading(false);
     } catch (error) {

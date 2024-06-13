@@ -21,7 +21,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const imageUpload = (await uploadImage(logoUrl)) as any;
+    const urll =
+      "https://img.freepik.com/free-photo/abstract-art-colorful-bright-ink-watercolor-textures-white-paper-background_1150-6597.jpg?t=st=1718244204~exp=1718247804~hmac=cf62633500662cff12353a445c935df2b5c957948db48be09173d4ebd09521a5&w=996";
+
+    const imageUpload = (await uploadImage(urll)) as any;
 
     console.log("imageUpload", imageUpload);
 

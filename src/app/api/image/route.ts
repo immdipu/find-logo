@@ -2,17 +2,21 @@ import uploadImage from "@/cloudinary/Upload";
 import { dbConnect } from "@/dbConfig/dbConfig";
 import Logo from "@/model/logoSchema";
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
-import { json } from "stream/consumers";
 export const maxDuration = 50;
 
 dbConnect();
 export async function POST(request: NextRequest) {
   try {
-    const reqBody = await request.json();
-    const { logoUrl, name, domain } = reqBody;
+    const formdata = await request.formData();
 
-    const logoData = await Logo.findOne({ domain });
+    if (!formdata) {
+      return NextResponse.json({
+        status: "error",
+        message: "No form data found",
+      });
+    }
+
+    const logoData = await Logo.findOne({ domain: formdata.get("domain") });
 
     if (logoData) {
       return NextResponse.json({
@@ -21,12 +25,25 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const urll =
-      "https://img.freepik.com/free-photo/abstract-art-colorful-bright-ink-watercolor-textures-white-paper-background_1150-6597.jpg?t=st=1718244204~exp=1718247804~hmac=cf62633500662cff12353a445c935df2b5c957948db48be09173d4ebd09521a5&w=996";
+    const image: any = await formdata.get("file");
 
-    const imageUpload = (await uploadImage(urll)) as any;
+    console.log("image", image);
 
-    console.log("imageUpload", imageUpload);
+    if (!image) {
+      return NextResponse.json({
+        status: "error",
+        message: "No image found",
+      });
+    }
+
+    const fileBuffer = await image.arrayBuffer();
+    console.log("fileBuffer", fileBuffer);
+    var mime = image.type;
+    var encoding = "base64";
+    var base64Data = Buffer.from(fileBuffer).toString("base64");
+    var fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
+
+    const imageUpload: any = await uploadImage(fileUri);
 
     if (!imageUpload) {
       return NextResponse.json({
@@ -35,9 +52,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    console.log("imageUpload", imageUpload);
+
     const newLogo = new Logo({
-      name,
-      domain,
+      name: formdata.get("name"),
+      domain: formdata.get("domain"),
       logo_url: imageUpload.secure_url,
       public_id: imageUpload.public_id,
     });
@@ -49,6 +68,7 @@ export async function POST(request: NextRequest) {
       message: "Image uploaded successfully",
     });
   } catch (error) {
+    console.error("Error uploading image 3:", error);
     return NextResponse.json(
       {
         status: "error",

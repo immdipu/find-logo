@@ -1,18 +1,7 @@
 import cloudinary from ".";
-import axios from "axios";
 
-async function uploadImage(imageUrl: string) {
+async function uploadImage(fileUri: string) {
   try {
-    const response = await axios.get(imageUrl, {
-      responseType: "arraybuffer",
-    });
-
-    const fileBuffer = response.data;
-    const mime = response.headers["content-type"];
-    const encoding = "base64";
-    const base64Data = Buffer.from(fileBuffer).toString("base64");
-    const fileUri = `data:${mime};${encoding},${base64Data}`;
-
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload(
         fileUri,
@@ -21,6 +10,7 @@ async function uploadImage(imageUrl: string) {
         },
         (error, result) => {
           if (error) {
+            console.error("Error uploading image 1:", error);
             reject(error);
           } else {
             resolve(result);
@@ -31,7 +21,7 @@ async function uploadImage(imageUrl: string) {
 
     return uploadResult;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Error uploading image 2:", error);
   }
 }
 

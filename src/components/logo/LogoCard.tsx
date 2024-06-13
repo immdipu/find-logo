@@ -16,14 +16,21 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
     setLoading(true);
     try {
       const brand = await getIcon(brandId);
+
       if (!brand) {
         toast.error("Failed to Upload Logo" || "Failed to Upload Logo");
       }
+      const file = await getImageFile(brand?.logos[0].formats[0].src!);
 
-      const response = await axios.post("/api/image", {
-        logoUrl: brand?.logos[0].formats[0].src,
-        name: brand?.name,
-        domain: brand?.domain,
+      const newform = new FormData();
+      newform.append("file", file);
+      newform.append("domain", domain);
+      newform.append("name", brand?.name || "no name");
+
+      const response = await axios.post("/api/image", newform, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (response?.data?.status === "success") {
@@ -55,19 +62,11 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
     return response?.data || null;
   };
 
-  // const extractImage = async (url: string) => {
-  //   const res = await fetch("https://api.extract.pics/v0/extractions", {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: `Bearer ${API_KEY}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ url: url }),
-  //   });
-
-  //   const json = await res.json();
-  //   return image;
-  // };
+  const getImageFile = async (url: string) => {
+    const response = await fetch(url);
+    const data = await response.blob();
+    return new File([data], "logo.png", { type: "image/png" });
+  };
 
   return (
     <>

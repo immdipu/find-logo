@@ -78,7 +78,7 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
       const url = URL.createObjectURL(file);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "logo.png";
+      a.download = `${file.name}`;
       a.click();
     } catch (error) {
       console.error(error);
@@ -92,7 +92,7 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
     <>
       <div className="bg-darkblue flex flex-col p-3 rounded-lg  ">
         <Images
-          src={icon}
+          src={icon || ""}
           height={150}
           alt={name}
           width={200}

@@ -27,8 +27,6 @@ const LogoCard: FC<LogoCardProps> = ({ domain, icon, name, brandId }) => {
       newform.append("domain", domain);
       newform.append("name", brand?.name || "no name");
 
-      console.log("newform", newform);
-
       const response = await axios.post("/api/image", newform, {
         headers: {
           "Content-Type": "multipart/form-data",
